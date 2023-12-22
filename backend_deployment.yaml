@@ -1,0 +1,58 @@
+#Combined bjp-emessenger Backend Deployment and Service YAML
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: dev
+  name: bjp-emessenger-backend  # Update the name
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bjp-emessenger-backend  # Update the label
+  template:
+    metadata:
+      labels:
+        name: bjp-emessenger-backend  # Update the label
+        app: bjp-emessenger-backend  # Update the label
+        version: 1.0.0
+    spec:
+      nodeName: mannit-4gb-nbg1-1
+      containers:
+      - args:
+        - sh
+        - -c
+        - cd /usr/src/app && npm install && npm run elastic
+        image: node:alpine
+        name: bjp-emessenger-backend  # Update the name
+        ports:
+        - containerPort: 8002
+          name: bjpmessenger-1
+        resources:
+          requests:
+            cpu: 300m
+            memory: 200Mi
+        volumeMounts:
+        - mountPath: /usr/src/app
+          name: bjp-emessenger-backend-pv-claim  # Update the name
+        workingDir: /usr/src/app
+      restartPolicy: Always
+      volumes:
+      - name: bjp-emessenger-backend-pv-claim  # Update the name
+        persistentVolumeClaim:
+          claimName: bjp-emessenger-backend-pv-claim  # Update the name
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: dev
+  name: bjp-emessenger-backend  # Update the name
+spec:
+  type: NodePort
+  ports:
+  - name: "bjpemessenger"
+    port: 8002
+    targetPort: 8002
+  selector:
+    app: bjp-emessenger-backend  # Update the label

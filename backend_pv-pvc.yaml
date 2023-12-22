@@ -1,0 +1,38 @@
+# PersistentVolume for bjp-emessenger Backend
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  namespace: dev
+  name: bjp-emessenger-backend-pv  # Update the name
+spec:
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: slow
+  mountOptions:
+    - hard
+    - nfsvers=4.1
+  nfs:
+    path: /opt/Dev/deploy-src/bjpemessenger/backend  # Update the path
+    server: 128.140.108.46
+
+---
+# PersistentVolumeClaim for bjp-emessenger Backend
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: dev
+  name: bjp-emessenger-backend-pv-claim  # Update the name
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: slow
+  resources:
+    requests:
+      storage: 1Gi
+
